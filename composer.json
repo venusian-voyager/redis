@@ -1,5 +1,5 @@
 {
-    "name": "voyager/redis",
+    "name": "venusian-voyager/redis",
     "description": "The Voyager Redis package.",
     "license": "MIT",
     "authors": [
@@ -13,10 +13,10 @@
     ],
     "require": {
         "php": "^8.4|^8.5",
-        "voyager/collections": "^0.8.0",
-        "voyager/contracts": "^0.8.0",
-        "voyager/macroable": "^0.8.0",
-        "voyager/nuts-and-bolts": "^0.8.0"
+        "venusian-voyager/collections": "^0.8.0",
+        "venusian-voyager/contracts": "^0.8.0",
+        "venusian-voyager/macroable": "^0.8.0",
+        "venusian-voyager/nuts-and-bolts": "^0.8.0"
     },
     "suggest": {
         "ext-redis": "Required to use the phpredis connector (^4.0|^5.0|^6.0).",
