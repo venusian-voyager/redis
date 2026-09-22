@@ -3,9 +3,9 @@
 namespace Voyager\Redis\Connections;
 
 use Closure;
-use Voyager\Contracts\Events\Dispatcher;
-use Voyager\Redis\Events\CommandExecuted;
-use Voyager\Redis\Events\CommandFailed;
+use Voyager\Contracts\Signals\SignalDispatcher;
+use Voyager\Redis\Signals\CommandExecuted;
+use Voyager\Redis\Signals\CommandFailed;
 use Voyager\Redis\Limiters\ConcurrencyLimiterBuilder;
 use Voyager\Redis\Limiters\DurationLimiterBuilder;
 use Voyager\NutsAndBolts\Concerns\Macroable;
@@ -37,7 +37,7 @@ abstract class Connection
     /**
      * The event dispatcher instance.
      *
-     * @var \Voyager\Contracts\Events\Dispatcher|null
+     * @var \Voyager\Contracts\Signals\SignalDispatcher|null
      */
     protected $events;
 
@@ -209,7 +209,7 @@ abstract class Connection
     /**
      * Get the event dispatcher used by the connection.
      *
-     * @return \Voyager\Contracts\Events\Dispatcher|null
+     * @return \Voyager\Contracts\Signals\SignalDispatcher|null
      */
     public function getEventDispatcher()
     {
@@ -219,10 +219,10 @@ abstract class Connection
     /**
      * Set the event dispatcher instance on the connection.
      *
-     * @param  \Voyager\Contracts\Events\Dispatcher  $events
+     * @param  \Voyager\Contracts\Signals\SignalDispatcher  $events
      * @return void
      */
-    public function setEventDispatcher(Dispatcher $events)
+    public function setEventDispatcher(SignalDispatcher $events)
     {
         $this->events = $events;
     }

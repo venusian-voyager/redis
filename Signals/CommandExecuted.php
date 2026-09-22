@@ -1,13 +1,11 @@
 <?php
 
-namespace Voyager\Redis\Events;
+namespace Voyager\Redis\Signals;
 
-use Throwable;
-
-class CommandFailed
+class CommandExecuted
 {
     /**
-     * The Redis command that failed.
+     * The Redis command that was executed.
      *
      * @var string
      */
@@ -21,11 +19,11 @@ class CommandFailed
     public $parameters;
 
     /**
-     * The exception that was thrown.
+     * The number of milliseconds it took to execute the command.
      *
-     * @var \Throwable
+     * @var float
      */
-    public $exception;
+    public $time;
 
     /**
      * The Redis connection instance.
@@ -46,14 +44,14 @@ class CommandFailed
      *
      * @param  string  $command
      * @param  array  $parameters
-     * @param  \Throwable  $exception
+     * @param  float|null  $time
      * @param  \Voyager\Redis\Connections\Connection  $connection
      */
-    public function __construct($command, $parameters, Throwable $exception, $connection)
+    public function __construct($command, $parameters, $time, $connection)
     {
+        $this->time = $time;
         $this->command = $command;
         $this->parameters = $parameters;
-        $this->exception = $exception;
         $this->connection = $connection;
         $this->connectionName = $connection->getName();
     }
