@@ -15,7 +15,7 @@ class RedisServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     public function register()
     {
-        $this->app->singleton('redis', function ($app) {
+        $this->app->registerSingleton('redis', function ($app) {
             $config = $app->make('config')->get('database.redis', []);
 
             return new RedisManager($app, Arr::pull($config, 'client', 'phpredis'), $config);
@@ -31,7 +31,7 @@ class RedisServiceProvider extends ServiceProvider implements DeferrableProvider
      *
      * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return ['redis', 'redis.connection'];
     }
