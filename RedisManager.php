@@ -4,6 +4,10 @@ namespace Voyager\Redis;
 
 use Closure;
 use Voyager\Contracts\Redis\Factory;
+use Voyager\Contracts\IOPools\Loop;
+use Voyager\Redis\Lists\ListPop;
+use Voyager\Redis\Lists\ListPush;
+use Voyager\Redis\Sockets\RedisEndpoint;
 use Voyager\Redis\Connections\Connection;
 use Voyager\Redis\Connectors\PhpRedisConnector;
 use Voyager\Redis\Connectors\PredisConnector;
@@ -119,6 +123,61 @@ class RedisManager implements Factory
         }
 
         throw new InvalidArgumentException("Redis connection [{$name}] not configured.");
+    }
+
+    /**
+     * A resource that RPUSHes onto one list without blocking the loop. It registers itself on the
+     * loop while a push waits for its reply.
+     *
+     * @param  string  $key
+     * @param  \UnitEnum|string|null  $connection
+     * @return ListPush
+     */
+    public function listPush(string $key, \UnitEnum|string|null $connection = null): ListPush
+    {
+        return new ListPush($this->endpoint($connection), $key, $this->app->make(Loop::class));
+    }
+
+    /**
+     * A resource that pops one list as loop mail. Register it: $loop->resource($name, $pop).
+     *
+     * @param  string  $key
+     * @param  \UnitEnum|string|null  $connection
+     * @param  int  $batch  how many more values each pop takes from behind the first
+     * @return ListPop
+     */
+    public function listPop(string $key, \UnitEnum|string|null $connection = null, int $batch = 64): ListPop
+    {
+        return new ListPop($this->endpoint($connection), $key, $this->app->make(Loop::class), $batch);
+    }
+
+    /**
+     * Where a list resource's own socket connects: the named connection's config and key prefix,
+     * the same prefix the connector gives that connection.
+     *
+     * @param  \UnitEnum|string|null  $name
+     * @return RedisEndpoint
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function endpoint(\UnitEnum|string|null $name): RedisEndpoint
+    {
+        $name = enum_value($name) ?: 'default';
+
+        if (isset($this->config['clusters'][$name])) {
+            throw new InvalidArgumentException("Redis list resources need a single-node connection, and [{$name}] is a cluster.");
+        }
+
+        if (! isset($this->config[$name])) {
+            throw new InvalidArgumentException("Redis connection [{$name}] not configured.");
+        }
+
+        $config = $this->parseConnectionConfiguration($this->config[$name]);
+
+        return RedisEndpoint::fromConfig(
+            $config,
+            (string) ($config['prefix'] ?? $config['options']['prefix'] ?? $this->config['options']['prefix'] ?? ''),
+        );
     }
 
     /**

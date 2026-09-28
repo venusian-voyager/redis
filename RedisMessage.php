@@ -2,33 +2,18 @@
 
 namespace Voyager\Redis;
 
-use Ramsey\Uuid\Uuid;
-use Voyager\Contracts\IOPools\Event;
+use Voyager\Contracts\Signals\NamedSignal;
 
-/** A list entry that was not one of ours. The raw string, untouched. */
-final class RedisMessage extends Event
+/** One value popped off a list, raw bytes as Redis stored them. Dispatched as "redis:{key}". */
+final readonly class RedisMessage implements NamedSignal
 {
-    private readonly string $uuid;
-
     public function __construct(
-        public readonly string $key,
-        public readonly string $raw,
-    ) {
-        $this->uuid = Uuid::uuid4()->toString();
-    }
+        public string $key,
+        public string $raw,
+    ) {}
 
     public function name(): string
     {
         return 'redis:'.$this->key;
-    }
-
-    public function uuid(): string
-    {
-        return $this->uuid;
-    }
-
-    public function toData(): array
-    {
-        return ['key' => $this->key, 'raw' => $this->raw];
     }
 }
