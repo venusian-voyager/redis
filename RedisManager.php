@@ -8,6 +8,7 @@ use Voyager\Contracts\IOPools\Loop;
 use Voyager\Redis\Lists\ListPop;
 use Voyager\Redis\Lists\ListPush;
 use Voyager\Redis\Sockets\RedisEndpoint;
+use Voyager\Redis\Sockets\RedisPipe;
 use Voyager\Redis\Connections\Connection;
 use Voyager\Redis\Connectors\PhpRedisConnector;
 use Voyager\Redis\Connectors\PredisConnector;
@@ -126,8 +127,7 @@ class RedisManager implements Factory
     }
 
     /**
-     * A resource that RPUSHes onto one list without blocking the loop. It registers itself on the
-     * loop while a push waits for its reply.
+     * RPUSH onto one list without blocking the loop, through its own pipe.
      *
      * @param  string  $key
      * @param  \UnitEnum|string|null  $connection
@@ -135,7 +135,18 @@ class RedisManager implements Factory
      */
     public function listPush(string $key, \UnitEnum|string|null $connection = null): ListPush
     {
-        return new ListPush($this->endpoint($connection), $key, $this->app->make(Loop::class));
+        return new ListPush($this->pipe($connection), $key);
+    }
+
+    /**
+     * Commands on a socket of their own that don't block the loop, each answered by a promise.
+     *
+     * @param  \UnitEnum|string|null  $connection
+     * @return RedisPipe
+     */
+    public function pipe(\UnitEnum|string|null $connection = null): RedisPipe
+    {
+        return new RedisPipe($this->endpoint($connection), $this->app->make(Loop::class));
     }
 
     /**
