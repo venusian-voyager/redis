@@ -12,7 +12,7 @@
         }
     ],
     "require": {
-        "php": "^8.4|^8.5",
+        "php": "~8.4.27||^8.5.12",
         "venusian-voyager/collections": "^0.10.0",
         "venusian-voyager/contracts": "^0.10.0",
         "venusian-voyager/macroable": "^0.10.0",
