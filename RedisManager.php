@@ -26,7 +26,7 @@ class RedisManager implements Factory
     /**
      * The application instance.
      *
-     * @var \Voyager\Contracts\System\Application
+     * @var \Voyager\Contracts\Core\FrameworkCore
      */
     protected $app;
 
@@ -68,7 +68,7 @@ class RedisManager implements Factory
     /**
      * Create a new Redis manager instance.
      *
-     * @param  \Voyager\Contracts\System\Application  $app
+     * @param  \Voyager\Contracts\Core\FrameworkCore  $app
      * @param  string  $driver
      * @param  array  $config
      */

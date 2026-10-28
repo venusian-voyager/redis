@@ -9,6 +9,8 @@ use Predis\Command\Argument\ArrayableArgument;
 
 /**
  * @mixin \Predis\Client
+ *
+ * @method \Predis\PubSub\Consumer pubSubLoop(array|null $options = null, callable|null $callback = null) Forwarded to the Predis client by __call.
  */
 class PredisConnection extends Connection implements ConnectionContract
 {
